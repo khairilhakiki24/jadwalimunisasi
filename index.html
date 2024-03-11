@@ -1,0 +1,273 @@
+<<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Jadwal Imunisasi</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+   /* Reset some default styles for better consistency */
+body, h1, h2, h3, p, label {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #88F2FF;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+.form-container {
+  background-color: #ffffff;
+  padding: 30px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#jadwalImunisasi {
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+/* Form styles */
+.form-label {
+  font-weight: bold;
+}
+
+.form-control {
+  border-radius: 5px;
+}
+
+.form-check-input {
+  margin-top: 0.2rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #bd2130;
+  border-color: #bd2130;
+}
+
+/* Table styles */
+.table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  text-align: left;
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+  .form-container,
+  #jadwalImunisasi {
+    padding: 20px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 form-container">
+        <h2 class="mb-4 text-center">BUAT JADWAL IMUNISASI</h2>
+
+        <!-- Form untuk data bayi -->
+        <form id="formBayi">
+          <div class="mb-3">
+            <label for="namaLengkap" class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control mb-3" id="namaLengkap" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="jenisKelamin" class="form-label">Jenis Kelamin</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="jenisKelamin" id="lakiLaki" value="Laki-laki" checked>
+              <label class="form-check-label" for="lakiLaki">Laki-laki</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="jenisKelamin" id="perempuan" value="Perempuan">
+              <label class="form-check-label" for="perempuan">Perempuan</label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="tanggalLahir" class="form-label">Tanggal Lahir</label>
+            <input type="date" class="form-control mb-3" id="tanggalLahir" required>
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="buatJadwalImunisasi()">Buat Jadwal Imunisasi</button>
+          <button type="button" class="btn btn-danger mt-2" onclick="hapusJadwalImunisasi()">Hapus Jadwal Imunisasi</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Jadwal Imunisasi Tepat -->
+    <div class="row justify-content-center">
+      <div class="col-md-8" id="jadwalImunisasi" class="mt-5 p-4 bg-light border rounded"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS dan Popper.js (diperlukan oleh Bootstrap) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript untuk membuat, menyimpan, dan menghapus jadwal imunisasi -->
+  <script>
+    // Mengecek apakah ada data pada localStorage
+    loadJadwalImunisasi();
+
+    function buatJadwalImunisasi() {
+      var namaLengkap = document.getElementById('namaLengkap').value;
+      var jenisKelamin = document.querySelector('input[name="jenisKelamin"]:checked').value;
+      var tanggalLahir = document.getElementById('tanggalLahir').value;
+
+      function formatTanggal(inputTanggal) {
+        var date = new Date(inputTanggal);
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+
+        month = month < 10 ? '0' + month : month;
+        day = day < 10 ? '0' + day : day;
+
+        return day + '-' + month + '-' + year;
+      }
+
+      function tambahBulan(inputTanggal, jumlahBulan) {
+        var date = new Date(inputTanggal);
+        date.setMonth(date.getMonth() + jumlahBulan);
+        return date;
+      }
+
+      var jadwalImunisasiData = [
+        { jenis: 'Hepatitis B', tanggal: formatTanggal(tanggalLahir), estimasi: formatTanggal(tanggalLahir) },
+        { jenis: 'BCG', tanggal: formatTanggal(tambahBulan(tanggalLahir, 1)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 1)) },
+        { jenis: 'Polio Tetes 1', tanggal: formatTanggal(tambahBulan(tanggalLahir, 1)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 1)) },
+        { jenis: 'DPT-HB-Hib 1', tanggal: formatTanggal(tambahBulan(tanggalLahir, 2)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 2)) },
+    { jenis: 'Polio Tetes 2', tanggal: formatTanggal(tambahBulan(tanggalLahir, 2)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 2)) },
+    { jenis: 'Rota Virus (RV) 1', tanggal: formatTanggal(tambahBulan(tanggalLahir, 2)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 2)) },
+    { jenis: 'PCV 1', tanggal: formatTanggal(tambahBulan(tanggalLahir, 2)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 2)) },
+    { jenis: 'DPT-HB-Hib 2', tanggal: formatTanggal(tambahBulan(tanggalLahir, 3)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 3)) },
+    { jenis: 'Polio Tetes 3', tanggal: formatTanggal(tambahBulan(tanggalLahir, 3)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 3)) },
+    { jenis: 'Rota Virus (RV) 2', tanggal: formatTanggal(tambahBulan(tanggalLahir, 3)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 3)) },
+    { jenis: 'PCV 2', tanggal: formatTanggal(tambahBulan(tanggalLahir, 3)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 3)) },
+    { jenis: 'DPT-HB-Hib 3', tanggal: formatTanggal(tambahBulan(tanggalLahir, 4)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 4)) },
+    { jenis: 'Polio Tetes 4', tanggal: formatTanggal(tambahBulan(tanggalLahir, 4)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 4)) },
+    { jenis: 'Rota Virus (RV) 3', tanggal: formatTanggal(tambahBulan(tanggalLahir, 4)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 4)) },
+    { jenis: 'Polio Suntik (IPV)1', tanggal: formatTanggal(tambahBulan(tanggalLahir, 4)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 4)) },
+    { jenis: 'Campak Rubella (MR)', tanggal: formatTanggal(tambahBulan(tanggalLahir, 9)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 9)) },
+    { jenis: 'Polio Suntik (IPV)2', tanggal: formatTanggal(tambahBulan(tanggalLahir, 9)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 9)) },
+    { jenis: 'PCV 3', tanggal: formatTanggal(tambahBulan(tanggalLahir, 12)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 12)) },
+    { jenis: 'DPT-HB-Hib Lanjutan', tanggal: formatTanggal(tambahBulan(tanggalLahir, 18)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 18)) },
+    { jenis: 'Campak Rubella (MR) Lanjutan', tanggal: formatTanggal(tambahBulan(tanggalLahir, 18)), estimasi: formatTanggal(tambahBulan(tanggalLahir, 18)) }
+];
+
+      localStorage.setItem('jadwalImunisasi', JSON.stringify({ nama: namaLengkap, jenisKelamin, tanggalLahir: formatTanggal(tanggalLahir), jadwalImunisasi: jadwalImunisasiData }));
+
+      loadJadwalImunisasi();
+    }
+
+    function loadJadwalImunisasi() {
+      var jadwalImunisasiData = JSON.parse(localStorage.getItem('jadwalImunisasi'));
+      var jadwalImunisasiElement = document.getElementById('jadwalImunisasi');
+      jadwalImunisasiElement.innerHTML = ''; // Kosongkan elemen sebelum menambahkan data baru
+      if (jadwalImunisasiData) {
+        var htmlString = `
+          <h3>JADWAL IMUNISASI TEPAT</h3>
+          <p><strong>Nama:</strong> ${jadwalImunisasiData.nama}</p>
+          <p><strong>Jenis Kelamin:</strong> ${jadwalImunisasiData.jenisKelamin}</p>
+          <p><strong>Tanggal Lahir:</strong> ${jadwalImunisasiData.tanggalLahir}</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Jenis Imunisasi</th>
+                <th scope="col">Estimasi Tanggal</th>
+                <th scope="col">Tanggal Imunisasi</th>
+                <th scope="col">Aktivitas Imunisasi</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        for (var i = 0; i < jadwalImunisasiData.jadwalImunisasi.length; i++) {
+          var jadwal = jadwalImunisasiData.jadwalImunisasi[i];
+          htmlString += `
+            <tr>
+              <td>${jadwal.jenis}</td>
+              <td>${jadwal.estimasi}</td>
+              <td><input type="date" value="${jadwal.tanggal}" onchange="updateTanggalImunisasi(${i}, this.value)"></td>
+              <td>
+                <select onchange="updateAktivitasImunisasi(${i}, this.value)">
+                  <option value="Tepat waktu" ${jadwal.aktivitas === 'Belum diatur' ? 'selected' : ''}>Belum diatur</option>
+                  <option value="Tepat waktu" ${jadwal.aktivitas === 'Tepat waktu' ? 'selected' : ''}>Tepat waktu</option>
+                  <option value="Sedikit terlambat" ${jadwal.aktivitas === 'Sedikit terlambat' ? 'selected' : ''}>Sedikit terlambat</option>
+                  <option value="Terlambat" ${jadwal.aktivitas === 'Terlambat' ? 'selected' : ''}>Terlambat</option>
+                  <option value="Tidak tepat waktu" ${jadwal.aktivitas === 'Tidak tepat waktu' ? 'selected' : ''}>Tidak tepat waktu</option>
+                  <option value="Tidak melakukan" ${jadwal.aktivitas === 'Tidak melakukan' ? 'selected' : ''}>Tidak melakukan</option>
+                </select>
+              </td>
+            </tr>
+          `;
+        }
+        htmlString += '</tbody></table>';
+        jadwalImunisasiElement.innerHTML = htmlString; // Tambahkan string HTML ke elemen
+      } else {
+        jadwalImunisasiElement.innerHTML += '<p>Data Jadwal Imunisasi tidak ditemukan.</p>';
+      }
+    }
+
+    function updateTanggalImunisasi(index, tanggal) {
+      var jadwalImunisasiData = JSON.parse(localStorage.getItem('jadwalImunisasi'));
+      jadwalImunisasiData.jadwalImunisasi[index].tanggal = tanggal;
+      localStorage.setItem('jadwalImunisasi', JSON.stringify(jadwalImunisasiData));
+      loadJadwalImunisasi();
+    }
+
+    function updateAktivitasImunisasi(index, aktivitas) {
+      var jadwalImunisasiData = JSON.parse(localStorage.getItem('jadwalImunisasi'));
+      jadwalImunisasiData.jadwalImunisasi[index].aktivitas = aktivitas;
+      localStorage.setItem('jadwalImunisasi', JSON.stringify(jadwalImunisasiData));
+      loadJadwalImunisasi();
+    }
+
+    function hapusJadwalImunisasi() {
+      localStorage.removeItem('jadwalImunisasi');
+      loadJadwalImunisasi();
+    }
+  </script>
+
+</body>
+
+</html>
