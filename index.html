@@ -8,93 +8,94 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-   /* Reset some default styles for better consistency */
-body, h1, h2, h3, p, label {
-  margin: 0;
-  padding: 0;
-}
-
-body {
+    body {
   font-family: 'Arial', sans-serif;
-  background-color: #88F2FF;
+  background-color: #f5f5f5; /* Warna latar belakang yang lebih tenang */
+  color: #333; /* Warna teks utama */
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 800px; /* Lebar maksimum untuk kenyamanan membaca */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 30px;
-  border: 1px solid #dee2e6;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
+.form-container,
 #jadwalImunisasi {
-  background-color: #ffffff;
-  padding: 20px;
-  border: 1px solid #dee2e6;
+  background-color: #88F2FF;
+  padding: 30px;
+  border: 1px solid #88F2FF;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
 
-/* Form styles */
-.form-label {
-  font-weight: bold;
-}
-
-.form-control {
-  border-radius: 5px;
-}
-
-.form-check-input {
-  margin-top: 0.2rem;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
-}
-
+/* Ganti warna tombol agar sesuai dengan tema */
+.btn-primary,
 .btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: #007bff;
+  border: 1px solid #007bff;
 }
 
-.btn-danger:hover {
-  background-color: #bd2130;
-  border-color: #bd2130;
+/* Ubah warna elemen radio button dan checkbox */
+.form-check-input {
+  margin-top: 0.25rem;
 }
 
-/* Table styles */
+/* Ubah warna elemen tabel */
 .table {
   width: 100%;
   margin-top: 20px;
+  border: 1px solid #d1d1d1;
 }
 
 .table th,
 .table td {
-  text-align: left;
+  border: 1px solid #d1d1d1;
 }
 
-/* Responsive styles */
+/* Sesuaikan warna untuk elemen input date */
+.form-control[type="date"] {
+  border-radius: 5px;
+}
+
+/* Tambahan: Sesuaikan warna untuk elemen select */
+select {
+  border-radius: 5px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+/* Sesuaikan ukuran font untuk elemen form */
+.form-label,
+.form-control,
+.form-check-label {
+  font-size: 16px;
+}
+
+/* Sesuaikan ukuran font untuk elemen tabel */
+.table th,
+.table td {
+  font-size: 14px;
+}
+
+/* Sesuaikan padding untuk versi responsif */
 @media (max-width: 767px) {
+  .container {
+    padding: 0 15px;
+  }
+
   .form-container,
   #jadwalImunisasi {
-    padding: 20px;
-  }
-
-  .btn {
-    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
   }
 }
+
   </style>
 </head>
 
@@ -134,25 +135,33 @@ body {
         </form>
       </div>
     </div>
-
-    <!-- Jadwal Imunisasi Tepat -->
-    <div class="row justify-content-center">
-      <div class="col-md-8" id="jadwalImunisasi" class="mt-5 p-4 bg-light border rounded"></div>
-    </div>
-  </div>
+ <!-- Jadwal Imunisasi Tepat -->
+ <div class="row justify-content-center">
+  <div class="col-md-8 mt-5 p-4 bg-light border rounded table-responsive" id="jadwalImunisasi"></div>
+</div>
+</div>
 
   <!-- Bootstrap JS dan Popper.js (diperlukan oleh Bootstrap) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- JavaScript untuk membuat, menyimpan, dan menghapus jadwal imunisasi -->
   <script>
-    // Mengecek apakah ada data pada localStorage
-    loadJadwalImunisasi();
 
-    function buatJadwalImunisasi() {
-      var namaLengkap = document.getElementById('namaLengkap').value;
-      var jenisKelamin = document.querySelector('input[name="jenisKelamin"]:checked').value;
-      var tanggalLahir = document.getElementById('tanggalLahir').value;
+    
+   // Mengecek apakah ada data pada localStorage
+loadJadwalImunisasi();
+
+function buatJadwalImunisasi() {
+  var namaLengkap = document.getElementById('namaLengkap').value;
+  var jenisKelamin = document.querySelector('input[name="jenisKelamin"]:checked').value;
+  var tanggalLahir = document.getElementById('tanggalLahir').value;
+
+  // Validasi untuk memastikan nama dan tanggal sudah diisi
+  if (!namaLengkap || !tanggalLahir) {
+    alert('Silakan isi Nama Lengkap dan Tanggal Lahir terlebih dahulu.');
+    return;
+  }
+
 
       function formatTanggal(inputTanggal) {
         var date = new Date(inputTanggal);
@@ -215,7 +224,6 @@ body {
               <tr>
                 <th scope="col">Jenis Imunisasi</th>
                 <th scope="col">Estimasi Tanggal</th>
-                <th scope="col">Tanggal Imunisasi</th>
                 <th scope="col">Aktivitas Imunisasi</th>
               </tr>
             </thead>
@@ -227,7 +235,7 @@ body {
             <tr>
               <td>${jadwal.jenis}</td>
               <td>${jadwal.estimasi}</td>
-              <td><input type="date" value="${jadwal.tanggal}" onchange="updateTanggalImunisasi(${i}, this.value)"></td>
+              
               <td>
                 <select onchange="updateAktivitasImunisasi(${i}, this.value)">
                   <option value="Tepat waktu" ${jadwal.aktivitas === 'Belum diatur' ? 'selected' : ''}>Belum diatur</option>
@@ -236,7 +244,10 @@ body {
                   <option value="Terlambat" ${jadwal.aktivitas === 'Terlambat' ? 'selected' : ''}>Terlambat</option>
                   <option value="Tidak tepat waktu" ${jadwal.aktivitas === 'Tidak tepat waktu' ? 'selected' : ''}>Tidak tepat waktu</option>
                   <option value="Tidak melakukan" ${jadwal.aktivitas === 'Tidak melakukan' ? 'selected' : ''}>Tidak melakukan</option>
-                </select>
+                </br>
+                  </select>
+                </br>
+                <input type="date" value="${jadwal.tanggal}" onchange="updateTanggalImunisasi(${i}, this.value)">
               </td>
             </tr>
           `;
@@ -263,9 +274,13 @@ body {
     }
 
     function hapusJadwalImunisasi() {
+    // Tambahkan konfirmasi sebelum menghapus data
+    var konfirmasi = confirm("Apakah Anda yakin ingin menghapus jadwal imunisasi?");
+    if (konfirmasi) {
       localStorage.removeItem('jadwalImunisasi');
       loadJadwalImunisasi();
     }
+  }
   </script>
 
 </body>
